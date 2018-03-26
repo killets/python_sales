@@ -2,7 +2,7 @@
 
 An interactive web interface for internal users to understand the sales of a product.
 
-![demo.png](https://www.dropbox.com/s/ldsv7q37clvlrky/demo.png?dl=1)
+![demo.png](demo.png)
 
 ## Stack
 ### Front_end
