@@ -8,7 +8,7 @@ An interactive web interface for internal users to understand the sales of a pro
 ### Front_end
 * Bootstrap
 * JQuery
-* Plottly
+* plotly (on D3.js)
 * ajax
 
 ### Back_end
