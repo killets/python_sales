@@ -1,20 +1,63 @@
 <!doctype html>
 <html lang="en">
-
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- D3.js -->
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- D3.js -->
+    <script type="text/javascript" src="{{ url_for('static', filename='plotly-latest.min.js') }}"></script>
+    <!-- Include Required Prerequisites -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/3/css/bootstrap.css" />
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+    <!-- for DataTable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- SALES -->
+    <script type="text/javascript" src="{{ url_for('static', filename='sales.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sales.css') }}">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript">
+    $(document).ready(function() {
+      // var graphs = {{graphJSON | safe}};
+                // console.log(graphs);
 
-<link rel="stylesheet" href="{{ url_for('static', filename='sales.css') }}">
+                // // var ids = {{ids | safe}};
+                // // console.log(ids);
 
+                // // for(var i in graphs) {
+                // //     Plotly.plot(ids[i], // the ID of the div, created above
+                // //                 graphs[i].data,
+                // //                 graphs[i].layout || {});
+                // // }
+
+                // plot(graphs)
+                // var graphs = {{graphJSON | safe}};
+                // console.log(graphs);
+
+                // var rows = JSON.parse("{{rows | safe }}");
+                var rows = JSON.parse({{ rows | tojson | safe }});
+                // console.log(rows);
+
+                // var date2 = [1,2,3,4,5];
+                // console.log(date);
+                // console.log(date2);
+                // var d = new Date(date[0]);
+                // console.log(d);
+                // var sum = {{sum | safe}};
+                // var mean = {{mean | safe}};
+                //  console.log(sum);
+                //   console.log(mean);
+                set_select_daterange_handle();
+                plot(rows);
+    });
+
+    </script>
 </head>
 
 <body>
@@ -50,127 +93,49 @@
 </div>
 
 <div class="main">
-<div class="container">
-
-  <h2>Panel</h2>
-
-  <p>An interactive web interface for internal users to understand the sales of a product.</p>
-  <div class="panel-group">
-    <div class="panel panel-default">
-      <div class="panel-heading"><i class="fa fa-paper-plane"></i> Aggregated Sales</div>
-      <div class="panel-body">
-    <lable>View by </lable>
- <select>
-  <option value='W' selected="selected">Week</option>
-  <option value='M'>Month</option>
-  <option value='Q'>Quarter</option>
-  <option value='A'>Year</option>
-</select> 
-<div id="myDiv"></div>
-<p align="center"><small>Note: 'dollar' stands for 'Transaction Amount'; 'quant'  stands for 'Quantity'; they have different y-axis on left/right side.</small></p>
-
-      </div>
+    <div class="container">
+        <h2>Panel</h2>
+        <p>An interactive web interface for internal users to understand the sales of a product.</p>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><i class="fa fa-paper-plane"></i> Aggregated Sales</div>
+                <div class="panel-body">
+                    <lable>View by </lable>
+                    <select>
+                        <option value='W' selected="selected">Week</option>
+                        <option value='M'>Month</option>
+                        <option value='Q'>Quarter</option>
+                        <option value='A'>Year</option>
+                    </select>
+                    <div id="demo"></div>
+                    <!-- Plotly chart will be drawn inside this DIV -->
+                    <div id="myDiv"></div>
+                    <p align="center"><small>Note: 'dollar' stands for 'Transaction Amount'; 'quant'  stands for 'Quantity'; they have different y-axis on left/right side.</small></p>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><i class="fa fa-paper-plane"></i> Negative Transactions</div>
+                <div class="panel-body">
+                    <label>Select Date Range:</label>
+                    <input type="text" name="daterange" value="01/01/2015 - 01/31/2015" />
+                    <i align="right"><small> (Note: click this input box to select date, then 'Apply' to get result table; After table loaded, click column header to sort.)</small></i>
+                    <div id='div2'></div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"></div>
+                <div class="panel-body"></div>
+            </div>
+        </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading"><i class="fa fa-paper-plane"></i> Negative Transactions</div>
-      <div class="panel-body">
-        <label>Select Date Range:</label>
-        <input type="text" name="daterange" value="01/01/2015 - 01/31/2015" />
-        <i align="right"><small> (Note: click this input box to select date, then 'Apply' to get result table; After table loaded, click column header to sort.)</small></i>
-    <div id='div2'></div>
-    </div>
-    </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading"></div>
-      <div class="panel-body"></div>
-    </div>
-  </div>
-</div>
 
 </div>
-
-
-<div class="main2">
-
-
-<!-- Plotly chart will be drawn inside this DIV -->
-<div id="myDiv2"></div>
-
-
-</div>
-
 
 
 </body>
 
 
 <footer>
-    <!-- Include Required Prerequisites -->
-<!-- <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
- -->
-<!--     <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
- -->
- <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/3/css/bootstrap.css" />
- 
-<!-- Include Date Range Picker -->
-<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-
-<!--     <script type="text/javascript" src="{{ url_for('static', filename='daterangepicker.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='daterangepicker.css') }}">
- -->
-
- <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-
-
-
-    <script type="text/javascript" src="{{ url_for('static', filename='plotly-latest.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='sales.js') }}"></script>
-
-    </script>
-
-
-
-
-    <script type="text/javascript">
-
-        // var graphs = {{graphJSON | safe}};
-        // console.log(graphs);
-
-        // // var ids = {{ids | safe}};
-        // // console.log(ids);
-
-        // // for(var i in graphs) {
-        // //     Plotly.plot(ids[i], // the ID of the div, created above
-        // //                 graphs[i].data,
-        // //                 graphs[i].layout || {});
-        // // }
-
-        // plot(graphs)
-        // var graphs = {{graphJSON | safe}};
-        // console.log(graphs);
-
-        // var rows = JSON.parse("{{rows | safe }}");
-        var rows = JSON.parse({{rows | tojson | safe}});
-        console.log(rows);
-        // var date2 = [1,2,3,4,5];
-        // console.log(date);
-        // console.log(date2);
-        // var d = new Date(date[0]);
-        // console.log(d);
-        // var sum = {{sum | safe}};
-        // var mean = {{mean | safe}};
-        //  console.log(sum);
-        //   console.log(mean);
-        plot(rows);
-
-
-
-    </script>
-
 </footer>
 
 </html>

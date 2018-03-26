@@ -1,68 +1,11 @@
-$('select')[0].selectedIndex = 0;
-
-$('select').on('change', function() {
-        $.ajax({
-        type:"GET",
-        url:"/?freq="+ this.value,
-        dataType: "json",
-        success:function(data){
-          console.log(data)
-          plot(data)
-        },
-        error:function(){
-          alert('There was an error')
-        }
-      })
-  
-})
- $('input[name="daterange"]').daterangepicker();
-  $('input[name="daterange2"]').daterangepicker();
-
-//     $('input[name="daterange"]').daterangepicker({
-//   minDate: moment().subtract(2, 'years')
-// }, function (startDate, endDate, period) {
-//   $(this).val(startDate.format('L') + ' – ' + endDate.format('L'))
-// });
-    $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-       console.log("----");
-        // console.log(picker.startDate.format('YYYY-MM-DD'));
-        // console.log(picker.endDate.format('YYYY-MM-DD'));
-        var start = picker.startDate.format('YYYY-MM-DD');
-        var end = picker.endDate.format('YYYY-MM-DD');
-                console.log("start");
-
-        console.log(start);
-                console.log(end);
-
-        $.ajax({
-        type:"GET",
-        url:"/getReturned?start="+ start + "&end=" + end,
-        dataType: "json",
-        success:function(data){
-          console.log(data);
-          $('#div2').html(data);
-          $('#div2 table').DataTable();
-        },
-        error:function(){
-          alert('There was an error')
-        }
-      })
-        
-
-    });
-
-
-
-
+// plotly chart
 function plot(rows) {
 
-  function unpack(rows, key) {
-  return rows.map(function(row) { return row[key]; });
-  // return rows[key];
+  // function unpack(rows, key) {
+  // return rows.map(function(row) { return row[key]; });
+  // // return rows[key];
+  // }
 
-}
-
-  
 var trace1 = {
   type: "scatter",
   mode: "lines+markers",
@@ -140,3 +83,66 @@ var layout = {
 Plotly.newPlot('myDiv', data, layout);
 }
 
+
+
+//
+//  ------------------
+//
+// Ulity
+// --------------
+//
+function set_select_daterange_handle() {
+    $('select')[0].selectedIndex = 0;
+
+    $('select').on('change', function() {
+        $.ajax({
+            type: "GET",
+            url: "/?freq=" + this.value,
+            dataType: "json",
+            success: function(data) {
+                console.log(data)
+                plot(data)
+            },
+            error: function() {
+                alert('There was an error')
+            }
+        })
+
+    })
+    $('input[name="daterange"]').daterangepicker();
+    $('input[name="daterange2"]').daterangepicker();
+
+    //     $('input[name="daterange"]').daterangepicker({
+    //   minDate: moment().subtract(2, 'years')
+    // }, function (startDate, endDate, period) {
+    //   $(this).val(startDate.format('L') + ' – ' + endDate.format('L'))
+    // });
+    $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+        console.log("----");
+        // console.log(picker.startDate.format('YYYY-MM-DD'));
+        // console.log(picker.endDate.format('YYYY-MM-DD'));
+        var start = picker.startDate.format('YYYY-MM-DD');
+        var end = picker.endDate.format('YYYY-MM-DD');
+        console.log("start");
+
+        console.log(start);
+        console.log(end);
+
+        $.ajax({
+            type: "GET",
+            url: "/getReturned?start=" + start + "&end=" + end,
+            dataType: "json",
+            success: function(data) {
+                console.log(data);
+                $('#div2').html(data);
+                $('#div2 table').DataTable();
+            },
+            error: function() {
+                alert('There was an error')
+            }
+        })
+
+
+    });
+
+};
